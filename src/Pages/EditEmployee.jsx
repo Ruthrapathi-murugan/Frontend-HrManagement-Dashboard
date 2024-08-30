@@ -30,7 +30,7 @@ function EditEmployee() {
     formData.append('image', employee.image);
 
     try {
-      const response = await axios.put(`http://localhost:5000/api/employees/${id}`, formData);
+      const response = await axios.put(`${import.meta.env.VITE_BE_URL}/api/employees/${id}`, formData);
       if (response.data.Status === 'Success') {
         navigate('/employee');
       } else {

@@ -41,7 +41,7 @@ const HRRegistration = () => {
       const { name, email, password, dob, phone, address } = formData;
       const userData = { name, email, password, dob, phone, address };
   
-      const response = await axios.post('http://localhost:5000/api/register', userData, {
+      const response = await axios.post(`${import.meta.env.VITE_BE_URL}/api/register`, userData, {
         withCredentials: true // Add this if you are using credentials like cookies
       });
   
@@ -173,7 +173,6 @@ const HRRegistration = () => {
         </form>
       </div>
     </div>
-    
   );
 };
 

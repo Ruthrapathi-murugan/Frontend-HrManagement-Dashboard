@@ -31,7 +31,7 @@ function Login() {
 
     try {
       // Make API request to login
-      const response = await axios.post('http://localhost:5000/api/login', values);
+      const response = await axios.post(`${import.meta.env.VITE_BE_URL}/api/login`, values);
       
       // On successful login, save the token and set auth status
       localStorage.setItem("authStatus", "authenticated");

@@ -56,7 +56,7 @@ function Recruitment() {
     setCandidates(updatedCandidates);
     localStorage.setItem('candidates', JSON.stringify(updatedCandidates));
     
-    await axios.post('http://localhost:5000/api/candidates', newCandidateWithId);
+    await axios.post(`${import.meta.env.VITE_BE_URL}/api/candidates`, newCandidateWithId);
 
     setNewCandidate({
       name: '',
