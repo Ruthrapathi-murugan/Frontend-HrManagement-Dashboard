@@ -1,11 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 
 function Recruitment() {
-  const [candidates, setCandidates] = useState([
-    { id: 1, name: 'Alice Johnson', position: 'Software Engineer', status: 'Interview Scheduled', email: 'alice@example.com', phone: '123-456-7890', applicationDate: '2024-08-15', notes: '' },
-    { id: 2, name: 'Bob Smith', position: 'UI/UX Designer', status: 'Resume Reviewed', email: 'bob@example.com', phone: '987-654-3210', applicationDate: '2024-08-20', notes: '' },
-    { id: 3, name: 'Charlie Brown', position: 'Project Manager', status: 'Hired', email: 'charlie@example.com', phone: '456-789-1230', applicationDate: '2024-08-10', notes: '' },
-  ]);
+  const [candidates, setCandidates] = useState([]);
+
+  useEffect(() => {
+    // Fetch initial data from local storage
+    const storedCandidates = JSON.parse(localStorage.getItem('candidates')) || [];
+    setCandidates(storedCandidates);
+  }, []);
 
   const [newCandidate, setNewCandidate] = useState({
     name: '',
@@ -17,20 +20,22 @@ function Recruitment() {
     notes: '',
   });
 
-  const handleStatusChange = (id, newStatus) => {
-    setCandidates(prevCandidates =>
-      prevCandidates.map(candidate =>
-        candidate.id === id ? { ...candidate, status: newStatus } : candidate
-      )
+  const handleStatusChange = async (id, newStatus) => {
+    const updatedCandidates = candidates.map(candidate =>
+      candidate.id === id ? { ...candidate, status: newStatus } : candidate
     );
+    setCandidates(updatedCandidates);
+    localStorage.setItem('candidates', JSON.stringify(updatedCandidates));
+    await axios.put(`http://localhost:5000/api/candidates/${id}`, { status: newStatus });
   };
 
-  const handleNotesChange = (id, newNotes) => {
-    setCandidates(prevCandidates =>
-      prevCandidates.map(candidate =>
-        candidate.id === id ? { ...candidate, notes: newNotes } : candidate
-      )
+  const handleNotesChange = async (id, newNotes) => {
+    const updatedCandidates = candidates.map(candidate =>
+      candidate.id === id ? { ...candidate, notes: newNotes } : candidate
     );
+    setCandidates(updatedCandidates);
+    localStorage.setItem('candidates', JSON.stringify(updatedCandidates));
+    await axios.put(`http://localhost:5000/api/candidates/${id}`, { notes: newNotes });
   };
 
   const handleInputChange = (e) => {
@@ -41,13 +46,18 @@ function Recruitment() {
     }));
   };
 
-  const handleAddCandidate = (e) => {
+  const handleAddCandidate = async (e) => {
     e.preventDefault();
     const newCandidateWithId = {
       ...newCandidate,
       id: candidates.length + 1,
     };
-    setCandidates(prevCandidates => [...prevCandidates, newCandidateWithId]);
+    const updatedCandidates = [...candidates, newCandidateWithId];
+    setCandidates(updatedCandidates);
+    localStorage.setItem('candidates', JSON.stringify(updatedCandidates));
+    
+    await axios.post('http://localhost:5000/api/candidates', newCandidateWithId);
+
     setNewCandidate({
       name: '',
       position: '',
@@ -199,3 +209,4 @@ function Recruitment() {
 }
 
 export default Recruitment;
+  

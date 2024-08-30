@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
 function LeaveManagement() {
-  const [leaveRequests, setLeaveRequests] = useState([
-    // Initial data if any
-  ]);
+  const [leaveRequests, setLeaveRequests] = useState(() => {
+    const storedRequests = localStorage.getItem('leaveRequests');
+    return storedRequests ? JSON.parse(storedRequests) : [];
+  });
 
   const [form, setForm] = useState({
     employeeName: '',
@@ -14,6 +15,17 @@ function LeaveManagement() {
     department: '',
     reason: '',
   });
+
+  useEffect(() => {
+    axios.get(`${import.meta.env.VITE_BE_URL}/api/leave-requests`)
+      .then(response => {
+        setLeaveRequests(response.data);
+        localStorage.setItem('leaveRequests', JSON.stringify(response.data));
+      })
+      .catch(error => {
+        console.error("There was an error fetching the leave requests!", error);
+      });
+  }, []);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -27,10 +39,11 @@ function LeaveManagement() {
       return;
     }
     try {
-      const responseLocal = await axios.post(`${import.meta.env.VITE_BE_URL}/api/leave-requests`, form);
-      const responseMongo = await axios.post(`${import.meta.env.VITE_BE_URL}/api/leave-requests`, form); // Assuming same backend URL for both
-      
-      setLeaveRequests([...leaveRequests, responseLocal.data]);
+      const response = await axios.post(`${import.meta.env.VITE_BE_URL}/api/leave-requests`, form);
+      const newRequest = response.data;
+      const updatedRequests = [...leaveRequests, newRequest];
+      setLeaveRequests(updatedRequests);
+      localStorage.setItem('leaveRequests', JSON.stringify(updatedRequests));
       setForm({
         employeeName: '',
         leaveType: '',
@@ -44,21 +57,18 @@ function LeaveManagement() {
     }
   };
 
-  const handleApprove = async (id) => {
+  const handleStatusChange = async (id, status) => {
+    console.log(`Attempting to change status of request with ID ${id} to ${status}`);
     try {
-      await axios.patch(`${import.meta.env.VITE_BE_URL}/api/leave-requests/${id}`, { status: 'Approved' });
-      setLeaveRequests(leaveRequests.map(request => request.id === id ? { ...request, status: 'Approved' } : request));
+      const response = await axios.patch(`${import.meta.env.VITE_BE_URL}/api/leave-requests/${id}`, { status });
+      console.log('Response from server:', response.data);
+      const updatedRequests = leaveRequests.map(request =>
+        request._id === id ? { ...request, status } : request
+      );
+      setLeaveRequests(updatedRequests);
+      localStorage.setItem('leaveRequests', JSON.stringify(updatedRequests));
     } catch (error) {
-      console.error('Error approving leave request:', error);
-    }
-  };
-
-  const handleReject = async (id) => {
-    try {
-      await axios.patch(`${import.meta.env.VITE_BE_URL}/api/leave-requests/${id}`, { status: 'Rejected' });
-      setLeaveRequests(leaveRequests.map(request => request.id === id ? { ...request, status: 'Rejected' } : request));
-    } catch (error) {
-      console.error('Error rejecting leave request:', error);
+      console.error(`Error updating leave request to ${status}:`, error);
     }
   };
 
@@ -152,8 +162,8 @@ function LeaveManagement() {
         </thead>
         <tbody>
           {leaveRequests.map(request => (
-            <tr key={request.id}>
-              <td>{request.id}</td>
+            <tr key={request._id}>
+              <td>{request._id}</td>
               <td>{request.employeeName}</td>
               <td>{request.leaveType}</td>
               <td>{request.startDate}</td>
@@ -166,10 +176,10 @@ function LeaveManagement() {
                 </span>
               </td>
               <td>
-                <button className="btn btn-success btn-sm me-2" onClick={() => handleApprove(request.id)}>
+                <button className="btn btn-success btn-sm me-2" onClick={() => handleStatusChange(request._id, 'Approved')}>
                   Approve
                 </button>
-                <button className="btn btn-danger btn-sm" onClick={() => handleReject(request.id)}>
+                <button className="btn btn-danger btn-sm" onClick={() => handleStatusChange(request._id, 'Rejected')}>
                   Reject
                 </button>
               </td>
