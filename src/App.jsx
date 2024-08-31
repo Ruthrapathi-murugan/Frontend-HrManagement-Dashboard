@@ -13,6 +13,13 @@ import EmAnalytics from './Pages/EmAnalytics';
 import HRRegistration from './Pages/HRRegistration';
 import RegistrationSuccess from './Pages/RegistrationSuccess';
 import ProtectedRoute from './Pages/ProtectedRoute'; // Ensure correct import path
+import Leaves from './Pages/Leaves';
+import Attendance from './Pages/Attendance';
+import Departments from './Pages/Departments';
+import Projects from './Pages/Projects';
+import Tasks from './Pages/Tasks';
+import Tickets from './Pages/Tickets';
+import Calendar from './Pages/Calendar';
 
 function App() {
     return (
@@ -29,6 +36,13 @@ function App() {
                     <Route path="leavemanagement" element={<ProtectedRoute element={LeaveManagement} />} />
                     <Route path="recruitment" element={<ProtectedRoute element={Recruitment} />} />
                     <Route path="analytics" element={<ProtectedRoute element={EmAnalytics} />} />
+                    <Route path="/home/leaves"  element={<ProtectedRoute element={Leaves} />} />
+                    <Route path="/home/attendance" element={<ProtectedRoute element={Attendance }/>} />
+                    <Route path="/home/departments" element={<ProtectedRoute element={Departments }/>} />
+                    <Route path="/home/projects" element={<ProtectedRoute element={Projects }/>} />
+                    <Route path="/home/tasks" element={<ProtectedRoute element={Tasks} />} />
+                    <Route path="/home/tickets" element={<ProtectedRoute element={Tickets} />} />
+                    <Route path="/home/calendar" element={<ProtectedRoute element={Calendar} />} />
                 </Route>
             </Routes>
         </AuthProvider>

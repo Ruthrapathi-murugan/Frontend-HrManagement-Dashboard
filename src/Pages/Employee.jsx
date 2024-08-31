@@ -1,4 +1,3 @@
-// src/components/Employee.jsx
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
@@ -7,6 +6,7 @@ function Employee() {
   const [data, setData] = useState([]);
 
   useEffect(() => {
+    // Fetch data from the server
     axios.get(`${import.meta.env.VITE_BE_URL}/getEmployee`)
       .then(res => {
         if (res.data.Status === 'Success') {
@@ -16,7 +16,16 @@ function Employee() {
         }
       })
       .catch(err => console.log(err));
-  }, []);
+
+    // Initialize with default data if empty
+    const defaultData = [
+      { id: '1', name: 'John Doe', email: 'john@example.com', address: '123 Main St', salary: '50000', image: 'default.jpg' },
+      { id: '2', name: 'Jane Smith', email: 'jane@example.com', address: '456 Elm St', salary: '60000', image: 'default.jpg' }
+    ];
+    if (data.length === 0) {
+      setData(defaultData);
+    }
+  }, [data]);
 
   const handleDelete = (id) => {
     const userConfirmed = window.confirm('Are you sure you want to delete this user?');

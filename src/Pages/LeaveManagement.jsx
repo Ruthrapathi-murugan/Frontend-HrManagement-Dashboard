@@ -58,10 +58,10 @@ function LeaveManagement() {
   };
 
   const handleStatusChange = async (id, status) => {
-    console.log(`Attempting to change status of request with ID ${id} to ${status}`);
     try {
+      console.log(`Changing status of request ${id} to ${status}`); // Debugging line
       const response = await axios.patch(`${import.meta.env.VITE_BE_URL}/api/leave-requests/${id}`, { status });
-      console.log('Response from server:', response.data);
+      console.log(response.data); // Debugging line
       const updatedRequests = leaveRequests.map(request =>
         request._id === id ? { ...request, status } : request
       );
@@ -69,6 +69,18 @@ function LeaveManagement() {
       localStorage.setItem('leaveRequests', JSON.stringify(updatedRequests));
     } catch (error) {
       console.error(`Error updating leave request to ${status}:`, error);
+    }
+  };
+
+  const handleDeleteRequest = async (id) => {
+    try {
+      console.log(`Deleting request ${id}`); // Debugging line
+      await axios.delete(`${import.meta.env.VITE_BE_URL}/api/leave-requests/${id}`);
+      const updatedRequests = leaveRequests.filter(request => request._id !== id);
+      setLeaveRequests(updatedRequests);
+      localStorage.setItem('leaveRequests', JSON.stringify(updatedRequests));
+    } catch (error) {
+      console.error('Error deleting leave request:', error);
     }
   };
 
@@ -179,8 +191,11 @@ function LeaveManagement() {
                 <button className="btn btn-success btn-sm me-2" onClick={() => handleStatusChange(request._id, 'Approved')}>
                   Approve
                 </button>
-                <button className="btn btn-danger btn-sm" onClick={() => handleStatusChange(request._id, 'Rejected')}>
+                <button className="btn btn-danger btn-sm me-2" onClick={() => handleStatusChange(request._id, 'Rejected')}>
                   Reject
+                </button>
+                <button className="btn btn-danger btn-sm" onClick={() => handleDeleteRequest(request._id)}>
+                  Delete
                 </button>
               </td>
             </tr>

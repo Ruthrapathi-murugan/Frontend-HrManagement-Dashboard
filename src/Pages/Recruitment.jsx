@@ -26,7 +26,7 @@ function Recruitment() {
     );
     setCandidates(updatedCandidates);
     localStorage.setItem('candidates', JSON.stringify(updatedCandidates));
-    await axios.put(`http://localhost:5000/api/candidates/${id}`, { status: newStatus });
+    await axios.put(`${import.meta.env.VITE_BE_URL}/api/candidates/${id}`, { status: newStatus });
   };
 
   const handleNotesChange = async (id, newNotes) => {
@@ -35,7 +35,7 @@ function Recruitment() {
     );
     setCandidates(updatedCandidates);
     localStorage.setItem('candidates', JSON.stringify(updatedCandidates));
-    await axios.put(`http://localhost:5000/api/candidates/${id}`, { notes: newNotes });
+    await axios.put(`${import.meta.env.VITE_BE_URL}/api/candidates/${id}`, { notes: newNotes });
   };
 
   const handleInputChange = (e) => {
@@ -67,6 +67,13 @@ function Recruitment() {
       applicationDate: '',
       notes: '',
     });
+  };
+
+  const handleDeleteCandidate = async (id) => {
+    const updatedCandidates = candidates.filter(candidate => candidate.id !== id);
+    setCandidates(updatedCandidates);
+    localStorage.setItem('candidates', JSON.stringify(updatedCandidates));
+    await axios.delete(`${import.meta.env.VITE_BE_URL}/api/candidates/${id}`);
   };
 
   return (
@@ -198,6 +205,9 @@ function Recruitment() {
                   <button className="btn btn-danger btn-sm" onClick={() => handleStatusChange(candidate.id, 'Rejected')}>
                     Reject
                   </button>
+                  <button className="btn btn-outline-danger btn-sm" onClick={() => handleDeleteCandidate(candidate.id)}>
+                    Delete
+                  </button>
                 </div>
               </td>
             </tr>
@@ -209,4 +219,3 @@ function Recruitment() {
 }
 
 export default Recruitment;
-  
