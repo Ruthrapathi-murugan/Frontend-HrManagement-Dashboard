@@ -8,7 +8,7 @@ function Dashboard() {
   axios.defaults.withCredentials = true;
 
   useEffect(() => {
-    axios.get(`${import.meta.env.VITE_BE_URL}/dashboard`).then((res) => {
+    axios.get(`${import.meta.env.VITE_BE_URL}/api/dashboard`).then((res) => {
       if (res.data.Status === "Success") {
         if (res.data.role === "admin") {
           navigate("/");

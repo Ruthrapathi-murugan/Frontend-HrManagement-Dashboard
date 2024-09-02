@@ -7,7 +7,7 @@ function Employee() {
 
   useEffect(() => {
     // Fetch data from the server
-    axios.get(`${import.meta.env.VITE_BE_URL}/getEmployee`)
+    axios.get(`${import.meta.env.VITE_BE_URL}/api/getEmployee`)
       .then(res => {
         if (res.data.Status === 'Success') {
           setData(res.data.Data);
@@ -30,7 +30,7 @@ function Employee() {
   const handleDelete = (id) => {
     const userConfirmed = window.confirm('Are you sure you want to delete this user?');
     if (userConfirmed) {
-      axios.delete(`${import.meta.env.VITE_BE_URL}/delete/${id}`)
+      axios.delete(`${import.meta.env.VITE_BE_URL}/api/delete/${id}`)
         .then(res => {
           if (res.data.Status === 'Success') {
             setData(data.filter(employee => employee.id !== id));
@@ -67,7 +67,7 @@ function Employee() {
                 <td>
                   {employee.image && (
                     <img 
-                      src={`${import.meta.env.VITE_BE_URL}/images/${employee.image}`} 
+                      src={`${import.meta.env.VITE_BE_URL}/api/images/${employee.image}`} 
                       alt={employee.name} 
                       className='employee_image' 
                       style={{ width: '50px', height: '50px' }}

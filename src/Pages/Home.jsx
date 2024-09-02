@@ -8,17 +8,17 @@ function Home() {
   const [salary, setSalary] = useState();
 
   useEffect(() => {
-    axios.get(`${import.meta.env.VITE_BE_URL}/adminCount`)
+    axios.get(`${import.meta.env.VITE_BE_URL}/api/adminCount`)
       .then(res => {
         setAdminCount(res.data.adminCount);
       }).catch(err => console.log(err));
 
-    axios.get(`${import.meta.env.VITE_BE_URL}/employeeCount`)
+    axios.get(`${import.meta.env.VITE_BE_URL}/api/employeeCount`)
       .then(res => {
         setEmployeeCount(res.data.employeeCount);
       }).catch(err => console.log(err));
 
-    axios.get(`${import.meta.env.VITE_BE_URL}/salary`)
+    axios.get(`${import.meta.env.VITE_BE_URL}/api/salary`)
       .then((response) => {
         setSalary(response.data.result[0].sumOfSalary);
       })
